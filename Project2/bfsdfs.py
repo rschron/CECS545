@@ -18,22 +18,25 @@ adj_matrix = np.array(
 
 def BFS(matrix):
     head = 0
-    visited = [False] * (len(adj_matrix))
     queue = [[head]]
-    visited[head] = True
+    best_dist = math.inf
 
     while queue:
         path = queue.pop(0)
-        node = path[-1]
+        node = path[-1]   
+        if 10 in path:
+            dist = sum(path)
+            if dist < best_dist:
+                best_dist = dist
         print("Path: " + str(path))
         print("Checking node: " + str(node))
         for j in range(0,len(matrix[node])):
-            if visited[j] is False and matrix[node][j] > 0:
+            if matrix[node][j] > 0:
                 new_path = path.copy()
                 new_path.append(j)
                 queue.append(new_path)
-                visited[j] = True
                 print("Visiting " + str(j+1))
+    print(best_dist)
 
 def DFS(matrix):
     return True
