@@ -1,5 +1,7 @@
 import numpy as np
 import math
+from itertools import cycle
+import time
 
 adj_matrix = np.array(
     [[0, 21.04751232,  8.20985338, 25.95058426, 0, 0, 0, 0, 0, 0, 0],
@@ -16,29 +18,71 @@ adj_matrix = np.array(
     np.float64
 )
 
+def get_path_length(path, matrix):
+    path_cycle = cycle(path)
+    next_node = next(path_cycle)
+    path_length = 0
+    while True:
+        this_node, next_node = next_node, next(path_cycle)
+        if next_node == path[0]:
+            break
+        path_length = path_length + matrix[this_node, next_node]
+    return path_length
+
 def BFS(matrix):
+    start_time = time.time()
     head = 0
     queue = [[head]]
     best_dist = math.inf
+    best_path = [] 
 
     while queue:
         path = queue.pop(0)
-        node = path[-1]   
+        node = path[-1]  
         if 10 in path:
-            dist = sum(path)
+            dist = get_path_length(path, matrix)
             if dist < best_dist:
                 best_dist = dist
-        print("Path: " + str(path))
-        print("Checking node: " + str(node))
+                best_path = path.copy()
         for j in range(0,len(matrix[node])):
             if matrix[node][j] > 0:
                 new_path = path.copy()
                 new_path.append(j)
                 queue.append(new_path)
-                print("Visiting " + str(j+1))
-    print(best_dist)
+    print("BFS Best Path: " +str(best_path))
+    print("BFS Best Distance: " + str(best_dist))
+    print("BFS Time: " + str(time.time()-start_time))
+    print()
 
 def DFS(matrix):
-    return True
+    start_time = time.time()
+    path_collection = []
+    def DFS_recurse(matrix, path):
+        node = path[-1]
 
+        for i in range(0, len(matrix[node])):
+            if matrix[node][i] > 0:
+                new_path = path.copy()
+                new_path.append(i)
+                DFS_recurse(matrix, new_path)
+        path_collection.append(path)
+    
+    head = [0]
+    best_path = []
+    best_dist = math.inf
+    
+    DFS_recurse(matrix, head)
+    for i in path_collection:
+        if 10 in i:
+            d = get_path_length(i, matrix)
+            if  d < best_dist:
+                best_dist = d
+                best_path = i
+
+    print("DFS Best Path: " + str(best_path))
+    print("DFS Best Dist: " + str(best_dist))
+    print("DFS Time: " + str(time.time()-start_time))
+    print()
+
+DFS(adj_matrix)
 BFS(adj_matrix)
