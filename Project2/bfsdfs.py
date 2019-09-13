@@ -3,6 +3,7 @@ import math
 from itertools import cycle
 import time
 
+#Define the adjacency matrix representing the input graph
 adj_matrix = np.array(
     [[0, 21.04751232,  8.20985338, 25.95058426, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 18.99134667, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -18,6 +19,12 @@ adj_matrix = np.array(
     np.float64
 )
 
+'''
+Helper function that takes a given path and computes the path length.  This
+is used to test candidate paths.
+Input: path (list), matrix (2d array)
+Output: path length (float)
+'''
 def get_path_length(path, matrix):
     path_cycle = cycle(path)
     next_node = next(path_cycle)
@@ -29,12 +36,18 @@ def get_path_length(path, matrix):
         path_length = path_length + matrix[this_node, next_node]
     return path_length
 
+'''
+Breadth-First Search solution to the shortest path problem.
+Input: matrix (2d array)
+Output: None
+'''
 def BFS(matrix):
     start_time = time.time()
     head = 0
     queue = [[head]]
     best_dist = math.inf
-    best_path = [] 
+    best_path = []
+    trans_count = 0
 
     while queue:
         path = queue.pop(0)
@@ -46,17 +59,29 @@ def BFS(matrix):
                 best_path = path.copy()
         for j in range(0,len(matrix[node])):
             if matrix[node][j] > 0:
+                #trans_count = trans_count + 1
                 new_path = path.copy()
                 new_path.append(j)
                 queue.append(new_path)
     print("BFS Best Path: " +str(best_path))
     print("BFS Best Distance: " + str(best_dist))
     print("BFS Time: " + str(time.time()-start_time))
+    #print("BFS Transitions: " + str(trans_count))
     print()
 
+'''
+Depth-First Search solution to the shortest path problem
+Input: matrix (2d array)
+Output: None
+'''
 def DFS(matrix):
     start_time = time.time()
     path_collection = []
+    '''
+    Recursive function that looks for potential paths
+    Input: matrix (2d array), path (list)
+    Output: None
+    '''
     def DFS_recurse(matrix, path):
         node = path[-1]
 
@@ -82,7 +107,11 @@ def DFS(matrix):
     print("DFS Best Path: " + str(best_path))
     print("DFS Best Dist: " + str(best_dist))
     print("DFS Time: " + str(time.time()-start_time))
+    #print("DFS Transitions: " + str(len(path_collection) - 1))
     print()
 
+#Run the DFS implementation
 DFS(adj_matrix)
+
+#Run the BFS implementation
 BFS(adj_matrix)
